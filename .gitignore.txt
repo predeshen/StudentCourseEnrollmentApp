@@ -1,0 +1,18 @@
+# Visual Studio files
+.vs/
+*.suo
+*.user
+*.sln.docstates
+
+# Build files
+[Dd]ebug/
+[Rr]elease/
+bin/
+obj/
+
+# Rider files
+.idea/
+
+# NuGet packages
+*.nupkg
+packages/
