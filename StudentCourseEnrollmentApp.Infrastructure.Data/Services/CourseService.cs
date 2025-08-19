@@ -43,5 +43,19 @@ namespace StudentCourseEnrollmentApp.Infrastructure.Data.Services
                 }).ToListAsync();
         }
 
+        Task<CourseDTO> ICourseService.AddCourseAsync(CourseDTO courseDto)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<bool> ICourseService.UpdateCourseAsync(CourseDTO courseDto)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<bool> ICourseService.DeleteCourseAsync(int courseId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
