@@ -9,9 +9,12 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.8" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.0.1" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\StudentCourseEnrollmentApp.Core.Application\StudentCourseEnrollmentApp.Core.Application.csproj" />
     <ProjectReference Include="..\StudentCourseEnrollmentApp.Core.Domain\StudentCourseEnrollmentApp.Core.Domain.csproj" />
   </ItemGroup>
 
