@@ -16,3 +16,10 @@ obj/
 # NuGet packages
 *.nupkg
 packages/
+/StudentCourseEnrollmentApp.Core.Application/obj/Debug/net9.0/StudentCourseEnrollmentApp.Core.Application.AssemblyInfo.cs
+/StudentCourseEnrollmentApp.Core.Application/obj/Debug/net9.0/StudentCourseEnrollmentApp.Core.Application.AssemblyInfoInputs.cache
+/StudentCourseEnrollmentApp.Core.Domain/obj/Debug/net9.0/StudentCourseEnrollmentApp.Core.Domain.AssemblyInfo.cs
+/StudentCourseEnrollmentApp.Core.Domain/obj/Debug/net9.0/StudentCourseEnrollmentApp.Core.Domain.AssemblyInfoInputs.cache
+/StudentCourseEnrollmentApp.Infrastructure.Data/obj/Debug/net9.0/StudentCourseEnrollmentApp.Infrastructure.Data.AssemblyInfo.cs
+/StudentCourseEnrollmentApp.Infrastructure.Data/obj/Debug/net9.0/StudentCourseEnrollmentApp.Infrastructure.Data.AssemblyInfoInputs.cache
+/StudentCourseEnrollmentApp.Infrastructure.Data/obj/Debug/net9.0/StudentCourseEnrollmentApp.Infrastructure.Data.assets.cache
