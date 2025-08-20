@@ -28,6 +28,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestSuite", "TestSuite", "{
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudentCourseEnrollmentApp.Tests", "StudentCourseEnrollmentApp.Tests\StudentCourseEnrollmentApp.Tests.csproj", "{77331D53-D06B-4164-9A59-B73C233F17EC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudentCourseEnrollmentApp.UI", "StudentCourseEnrollmentApp.UI\StudentCourseEnrollmentApp.UI.csproj", "{58EE80CA-D4C4-470A-B42B-A43325F12DD6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,6 +56,10 @@ Global
 		{77331D53-D06B-4164-9A59-B73C233F17EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77331D53-D06B-4164-9A59-B73C233F17EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77331D53-D06B-4164-9A59-B73C233F17EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58EE80CA-D4C4-470A-B42B-A43325F12DD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58EE80CA-D4C4-470A-B42B-A43325F12DD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58EE80CA-D4C4-470A-B42B-A43325F12DD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58EE80CA-D4C4-470A-B42B-A43325F12DD6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
