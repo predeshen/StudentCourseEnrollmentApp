@@ -1,5 +1,7 @@
 ﻿@page "/auth"
+@using Microsoft.AspNetCore.Authorization
 @using StudentCourseEnrollmentApp.Core.Application.DTOs
+@attribute [AllowAnonymous]
 @inject Services.Interfaces.IAuthenticationService AuthService
 @inject NavigationManager NavManager
 @inject CustomAuthStateProvider AuthStateProvider
@@ -75,7 +77,7 @@
         if (result.Result)
         {
             await AuthStateProvider.MarkUserAsAuthenticated(result.Token);
-            NavManager.NavigateTo("/");
+            NavManager.NavigateTo("/", forceLoad: true);
         }
         else
         {
@@ -90,7 +92,7 @@
             if (result.Result && result.Token != null)
             {
                 await AuthStateProvider.MarkUserAsAuthenticated(result.Token);
-                NavManager.NavigateTo("/");
+                NavManager.NavigateTo("/", forceLoad: true);
             }
         }
         else

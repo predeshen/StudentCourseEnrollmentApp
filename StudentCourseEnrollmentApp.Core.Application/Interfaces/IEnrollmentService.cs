@@ -6,9 +6,9 @@ namespace StudentCourseEnrollmentApp.Core.Application.Services
 {
     public interface IEnrollmentService
     {
-        Task<bool> EnrollStudentInCourseAsync(int studentId, int courseId);
-        Task<bool> DeregisterStudentFromCourseAsync(int studentId, int courseId);
-        Task<IEnumerable<CourseDTO>> GetEnrolledCoursesByStudentIdAsync(int studentId);
-        Task<IEnumerable<CourseDTO>> GetAvailableCoursesByStudentIdAsync(int studentId);
+        Task<bool> EnrollStudentInCourseAsync(string userId, int courseId);
+        Task<bool> DeregisterStudentFromCourseAsync(string userId, int courseId);
+        Task<IEnumerable<CourseDTO>> GetEnrolledCoursesByStudentIdAsync(string userId);
+        Task<IEnumerable<CourseDTO>> GetAvailableCoursesByStudentIdAsync(string userId);
     }
 }

@@ -21,9 +21,19 @@ namespace StudentCourseEnrollmentApp.UI
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            var token = await GetTokenFromLocalStorageAsync(); // Implement a helper method
-            var identity = string.IsNullOrEmpty(token) ? new ClaimsIdentity() : new ClaimsIdentity(ParseClaimsFromJwt(token), "jwtAuthType");
-            return new AuthenticationState(new ClaimsPrincipal(identity));
+            var token = await GetTokenFromLocalStorageAsync();
+            
+            if (!string.IsNullOrEmpty(token))
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                var identity = new ClaimsIdentity(ParseClaimsFromJwt(token), "jwtAuthType");
+                return new AuthenticationState(new ClaimsPrincipal(identity));
+            }
+            else
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = null;
+                return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+            }
         }
 
         private static IEnumerable<Claim> ParseClaimsFromJwt(string jwt)
@@ -52,6 +62,9 @@ namespace StudentCourseEnrollmentApp.UI
         public async Task MarkUserAsAuthenticated(string token)
         {
             await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "authToken", token);
+            
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            
             var authenticatedUser = new ClaimsPrincipal(new ClaimsIdentity(ParseClaimsFromJwt(token), "jwtAuthType"));
             var authState = Task.FromResult(new AuthenticationState(authenticatedUser));
             NotifyAuthenticationStateChanged(authState);

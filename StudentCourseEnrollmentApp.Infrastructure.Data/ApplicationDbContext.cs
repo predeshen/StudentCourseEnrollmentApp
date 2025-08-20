@@ -13,7 +13,6 @@ namespace StudentCourseEnrollmentApp.Infrastructure.Data
         }
 
         // DbSets for our custom domain entities
-        public DbSet<Student> Students { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<Enrollment> Enrollments { get; set; }
 
@@ -24,9 +23,9 @@ namespace StudentCourseEnrollmentApp.Infrastructure.Data
 
             // Configure entity relationships and keys
             modelBuilder.Entity<Enrollment>()
-                .HasOne(e => e.Student)
-                .WithMany(s => s.Enrollments)
-                .HasForeignKey(e => e.StudentId);
+                .HasOne(e => e.User)
+                .WithMany()
+                .HasForeignKey(e => e.UserId);
 
             modelBuilder.Entity<Enrollment>()
                 .HasOne(e => e.Course)

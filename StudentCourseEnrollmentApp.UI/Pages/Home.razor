@@ -1,11 +1,13 @@
 ﻿@page "/"
 @using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
 @inject NavigationManager NavManager
 
 <PageTitle>Home</PageTitle>
 
 <h1>Welcome to the Course Enrollment App</h1>
 
-<p>This is the home page. You can navigate to other pages using the menu on the left.</p>
+<p>Welcome! You are now logged in and can access all features of the application.</p>
 
-<p>Please log in to manage your courses.</p>
+<p>Use the navigation menu on the left to browse courses and manage your enrollments.</p>

@@ -18,10 +18,10 @@ namespace StudentCourseEnrollmentApp.Infrastructure.Data.Services
             _context = context;
         }
 
-        public async Task<bool> EnrollStudentInCourseAsync(int studentId, int courseId)
+        public async Task<bool> EnrollStudentInCourseAsync(string userId, int courseId)
         {
             var isEnrolled = await _context.Enrollments
-                .AnyAsync(e => e.StudentId == studentId && e.CourseId == courseId);
+                .AnyAsync(e => e.UserId == userId && e.CourseId == courseId);
 
             if (isEnrolled)
             {
@@ -30,7 +30,7 @@ namespace StudentCourseEnrollmentApp.Infrastructure.Data.Services
 
             var enrollment = new Enrollment
             {
-                StudentId = studentId,
+                UserId = userId,
                 CourseId = courseId,
                 EnrollmentDate = DateTime.UtcNow
             };
@@ -40,10 +40,10 @@ namespace StudentCourseEnrollmentApp.Infrastructure.Data.Services
             return true;
         }
 
-        public async Task<bool> DeregisterStudentFromCourseAsync(int studentId, int courseId)
+        public async Task<bool> DeregisterStudentFromCourseAsync(string userId, int courseId)
         {
             var enrollment = await _context.Enrollments
-                .FirstOrDefaultAsync(e => e.StudentId == studentId && e.CourseId == courseId);
+                .FirstOrDefaultAsync(e => e.UserId == userId && e.CourseId == courseId);
 
             if (enrollment == null)
             {
@@ -55,10 +55,10 @@ namespace StudentCourseEnrollmentApp.Infrastructure.Data.Services
             return true;
         }
 
-        public async Task<IEnumerable<CourseDTO>> GetEnrolledCoursesByStudentIdAsync(int studentId)
+        public async Task<IEnumerable<CourseDTO>> GetEnrolledCoursesByStudentIdAsync(string userId)
         {
             return await _context.Enrollments
-                .Where(e => e.StudentId == studentId)
+                .Where(e => e.UserId == userId)
                 .Include(e => e.Course) 
                 .Select(e => new CourseDTO
                 {
@@ -71,10 +71,10 @@ namespace StudentCourseEnrollmentApp.Infrastructure.Data.Services
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<CourseDTO>> GetAvailableCoursesByStudentIdAsync(int studentId)
+        public async Task<IEnumerable<CourseDTO>> GetAvailableCoursesByStudentIdAsync(string studentId)
         {
             var enrolledCourseIds = await _context.Enrollments
-                .Where(e => e.StudentId == studentId)
+                .Where(e => e.UserId == studentId)
                 .Select(e => e.CourseId)
                 .ToListAsync();
 

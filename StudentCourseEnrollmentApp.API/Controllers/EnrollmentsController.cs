@@ -29,9 +29,7 @@ namespace StudentCourseEnrollmentApp.API.Controllers
                 return Unauthorized();
             }
 
-            int studentId = int.Parse(userId);
-
-            var result = await _enrollmentService.EnrollStudentInCourseAsync(studentId, courseId);
+            var result = await _enrollmentService.EnrollStudentInCourseAsync(userId, courseId);
             if (!result)
             {
                 return BadRequest("Enrollment failed. You may already be enrolled in this course.");
@@ -48,9 +46,8 @@ namespace StudentCourseEnrollmentApp.API.Controllers
             {
                 return Unauthorized();
             }
-            int studentId = int.Parse(userId);
 
-            var result = await _enrollmentService.DeregisterStudentFromCourseAsync(studentId, courseId);
+            var result = await _enrollmentService.DeregisterStudentFromCourseAsync(userId, courseId);
             if (!result)
             {
                 return NotFound("Enrollment not found.");
@@ -67,9 +64,8 @@ namespace StudentCourseEnrollmentApp.API.Controllers
             {
                 return Unauthorized();
             }
-            int studentId = int.Parse(userId);
 
-            var courses = await _enrollmentService.GetEnrolledCoursesByStudentIdAsync(studentId);
+            var courses = await _enrollmentService.GetEnrolledCoursesByStudentIdAsync(userId);
             return Ok(courses);
         }
 
@@ -81,10 +77,9 @@ namespace StudentCourseEnrollmentApp.API.Controllers
             {
                 return Unauthorized();
             }
-            int studentId = int.Parse(userId);
 
-            var courses = await _enrollmentService.GetAvailableCoursesByStudentIdAsync(studentId);
+            var courses = await _enrollmentService.GetAvailableCoursesByStudentIdAsync(userId);
             return Ok(courses);
-        }
+            }
     }
 }
