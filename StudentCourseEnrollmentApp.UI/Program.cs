@@ -21,4 +21,6 @@ builder.Services.AddScoped<ICourseService, StudentCourseEnrollmentApp.UI.Service
 builder.Services.AddScoped<IEnrollmentService, StudentCourseEnrollmentApp.UI.Services.EnrollmentService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IToastService, ToastService>();
+builder.Services.AddScoped<LoadingService>();
+
 await builder.Build().RunAsync();

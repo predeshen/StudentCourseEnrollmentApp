@@ -1,4 +1,10 @@
-﻿<CascadingAuthenticationState>
+﻿@using Microsoft.AspNetCore.Components
+@using StudentCourseEnrollmentApp.UI.Services
+@inject LoadingService LoadingService
+
+<SplashScreen IsVisible="@_isLoading" Progress="@_progress" LoadingMessage="@_loadingMessage" />
+
+<CascadingAuthenticationState>
     <Router AppAssembly="@typeof(App).Assembly">
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
@@ -24,3 +30,43 @@
     </Router>
     <ToastContainer />
 </CascadingAuthenticationState>
+
+@code {
+    private bool _isLoading = true;
+    private int _progress = 0;
+    private string _loadingMessage = "Initializing application...";
+
+    protected override void OnInitialized()
+    {
+        // Ensure splash screen is visible immediately
+        StateHasChanged();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Subscribe to loading state changes
+            LoadingService.LoadingStateChanged += OnLoadingStateChanged;
+            
+            // Start the loading process immediately
+            await LoadingService.StartLoadingAsync();
+            
+            // Complete loading
+            await LoadingService.CompleteLoadingAsync();
+        }
+    }
+
+    private void OnLoadingStateChanged(bool isLoading, int progress, string message)
+    {
+        _isLoading = isLoading;
+        _progress = progress;
+        _loadingMessage = message;
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        LoadingService.LoadingStateChanged -= OnLoadingStateChanged;
+    }
+}

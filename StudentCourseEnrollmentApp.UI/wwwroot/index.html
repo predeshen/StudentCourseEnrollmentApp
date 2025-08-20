@@ -13,23 +13,65 @@
     <link rel="stylesheet" href="css/modern-app.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
     <link href="StudentCourseEnrollmentApp.UI.styles.css" rel="stylesheet" />
+    <style>
+        .initial-loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999999;
+            color: white;
+            text-align: center;
+        }
+        .initial-loading .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 
 <body>
     <div id="app">
-        <svg class="loading-progress">
-            <circle r="40%" cx="50%" cy="50%" />
-            <circle r="40%" cx="50%" cy="50%" />
-        </svg>
+        <div class="initial-loading">
+            <div>
+                <div class="spinner"></div>
+                <h2>Student Course Enrollment</h2>
+                <p>Loading your educational journey...</p>
+            </div>
+        </div>
         <div class="loading-progress-text"></div>
     </div>
 
-    <div id="blazor-error-ui">
-        An unhandled error has occurred.
-        <a href="." class="reload">Reload</a>
-        <span class="dismiss">🗙</span>
-    </div>
     <script src="_framework/blazor.webassembly.js"></script>
+    <script>
+        // Hide the initial loading screen once Blazor is ready
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                const loadingElement = document.querySelector('.initial-loading');
+                if (loadingElement) {
+                    loadingElement.style.opacity = '0';
+                    loadingElement.style.transition = 'opacity 0.5s ease-out';
+                    setTimeout(function() {
+                        loadingElement.style.display = 'none';
+                    }, 500);
+                }
+            }, 1000);
+        });
+    </script>
 </body>
 
 </html>

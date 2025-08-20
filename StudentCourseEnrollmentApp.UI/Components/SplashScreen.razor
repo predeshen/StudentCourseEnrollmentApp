@@ -1,0 +1,46 @@
+@using Microsoft.AspNetCore.Components
+
+<div class="splash-screen @(IsVisible ? "visible" : "hidden")">
+    <div class="splash-content">
+        <div class="logo-container">
+            <div class="logo-icon">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <h1 class="app-title">Student Course Enrollment</h1>
+            <p class="app-subtitle">Loading your educational journey...</p>
+        </div>
+        
+        <div class="loading-indicator">
+            <div class="spinner"></div>
+            <p class="loading-text">@(string.IsNullOrEmpty(LoadingMessage) ? "Initializing application..." : LoadingMessage)</p>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" style="width: @(Math.Max(0, Math.Min(100, Progress)))%"></div>
+        </div>
+        
+        @if (Progress >= 100)
+        {
+            <div class="completion-message">
+                <p>🎉 Ready to go!</p>
+            </div>
+        }
+        
+        @if (Progress < 100 && Progress > 0)
+        {
+            <div class="progress-text">
+                <small>@Progress% Complete</small>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public bool IsVisible { get; set; } = true;
+    [Parameter] public int Progress { get; set; } = 0;
+    [Parameter] public string LoadingMessage { get; set; } = "Initializing application...";
+}
