@@ -1,0 +1,181 @@
+@using StudentCourseEnrollmentApp.Core.Application.DTOs
+@using StudentCourseEnrollmentApp.UI.Services
+@using StudentCourseEnrollmentApp.UI.Services.Interfaces
+@using StudentCourseEnrollmentApp.Core.Application.Interfaces
+@inject IAdminService AdminService
+@inject ICourseService CourseService
+
+<div class="card">
+    <div class="card-header">
+        <h3>Course Management</h3>
+        <button class="btn btn-primary" @onclick="ShowCreateForm">Add New Course</button>
+    </div>
+    <div class="card-body">
+        @if (showCreateForm)
+        {
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h4>@(editingCourse != null ? "Edit Course" : "Create New Course")</h4>
+                    <form @onsubmit="HandleSubmit">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="courseTitle">Course Title</label>
+                                    <input type="text" class="form-control" id="courseTitle" @bind="courseForm.CourseTitle" required />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="courseCode">Course Code</label>
+                                    <input type="text" class="form-control" id="courseCode" @bind="courseForm.CourseCode" required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label for="description">Description</label>
+                                    <textarea class="form-control" id="description" rows="3" @bind="courseForm.Description" required></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="credits">Credits</label>
+                                    <input type="number" class="form-control" id="credits" @bind="courseForm.Credits" min="1" max="10" required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-success me-2">@(editingCourse != null ? "Update Course" : "Create Course")</button>
+                                <button type="button" class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        }
+
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Course Code</th>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Credits</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var course in courses)
+                    {
+                        <tr>
+                            <td>@course.CourseCode</td>
+                            <td>@course.CourseTitle</td>
+                            <td>@course.Description</td>
+                            <td>@course.Credits</td>
+                            <td>
+                                <button class="btn btn-sm btn-warning me-2" @onclick="() => EditCourse(course)">Edit</button>
+                                <button class="btn btn-sm btn-danger" @onclick="() => DeleteCourse(course.CourseId)">Delete</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<CourseDTO> courses = new();
+    private bool showCreateForm = false;
+    private CourseDTO? editingCourse = null;
+    private CreateCourseDTO courseForm = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCourses();
+    }
+
+    private async Task LoadCourses()
+    {
+        try
+        {
+            courses = (await CourseService.GetAllCoursesAsync()).ToList();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading courses: {ex.Message}");
+        }
+    }
+
+    private void ShowCreateForm()
+    {
+        showCreateForm = true;
+        editingCourse = null;
+        courseForm = new CreateCourseDTO();
+    }
+
+    private void EditCourse(CourseDTO course)
+    {
+        editingCourse = course;
+        courseForm = new CreateCourseDTO
+        {
+            CourseTitle = course.CourseTitle,
+            CourseCode = course.CourseCode,
+            Description = course.Description,
+            Credits = course.Credits
+        };
+        showCreateForm = true;
+    }
+
+    private void CancelEdit()
+    {
+        showCreateForm = false;
+        editingCourse = null;
+        courseForm = new CreateCourseDTO();
+    }
+
+    private async Task HandleSubmit()
+    {
+        try
+        {
+            if (editingCourse != null)
+            {
+                var updateDto = new UpdateCourseDTO
+                {
+                    CourseId = editingCourse.CourseId,
+                    CourseTitle = courseForm.CourseTitle,
+                    CourseCode = courseForm.CourseCode,
+                    Description = courseForm.Description,
+                    Credits = courseForm.Credits
+                };
+                await AdminService.UpdateCourseAsync(updateDto);
+            }
+            else
+            {
+                await AdminService.CreateCourseAsync(courseForm);
+            }
+
+            await LoadCourses();
+            CancelEdit();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving course: {ex.Message}");
+        }
+    }
+
+    private async Task DeleteCourse(int courseId)
+    {
+        if (await AdminService.DeleteCourseAsync(courseId))
+        {
+            await LoadCourses();
+        }
+        else
+        {
+            Console.WriteLine("Failed to delete course. It may have enrollments.");
+        }
+    }
+}

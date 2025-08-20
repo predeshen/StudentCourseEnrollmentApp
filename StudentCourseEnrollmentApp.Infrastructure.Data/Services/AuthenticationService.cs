@@ -24,7 +24,13 @@ namespace StudentCourseEnrollmentApp.Infrastructure.Data
 
         public async Task<AuthResultDTO> RegisterUserAsync(UserRegistrationRequestDTO request)
         {
-            var user = new ApplicationUser { UserName = request.Email, Email = request.Email };
+            var user = new ApplicationUser 
+            { 
+                UserName = request.Email, 
+                Email = request.Email,
+                FirstName = request.FirstName ?? "",
+                LastName = request.LastName ?? ""
+            };
             var result = await _userManager.CreateAsync(user, request.Password);
 
             if (!result.Succeeded)
@@ -64,7 +70,8 @@ namespace StudentCourseEnrollmentApp.Infrastructure.Data
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Name, user.UserName)
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim("IsSuperAdmin", user.IsSuperAdmin.ToString())
             };
 
             var token = new JwtSecurityToken(

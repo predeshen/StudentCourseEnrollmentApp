@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using StudentCourseEnrollmentApp.Core.Application;
 using StudentCourseEnrollmentApp.Core.Application.Services;
+using StudentCourseEnrollmentApp.Core.Application.Interfaces;
 using StudentCourseEnrollmentApp.Core.Domain;
 using StudentCourseEnrollmentApp.Infrastructure.Data;
 using StudentCourseEnrollmentApp.Infrastructure.Data.Services;
@@ -25,6 +26,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<IAuthenticationService, StudentCourseEnrollmentApp.Infrastructure.Data.AuthenticationService>();
             services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<IEnrollmentService, EnrollmentService>();
+            services.AddScoped<IAdminService, AdminService>();
 
             return services;
         }

@@ -5,6 +5,7 @@ using StudentCourseEnrollmentApp.Infrastructure.Data;
 using StudentCourseEnrollmentApp.UI;
 using StudentCourseEnrollmentApp.UI.Services;
 using StudentCourseEnrollmentApp.UI.Services.Interfaces;
+using StudentCourseEnrollmentApp.Core.Application.Interfaces;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -18,4 +19,5 @@ builder.Services.AddScoped<CustomAuthStateProvider>();
 builder.Services.AddScoped<IAuthenticationService, StudentCourseEnrollmentApp.UI.Services.AuthenticationService>();
 builder.Services.AddScoped<ICourseService, StudentCourseEnrollmentApp.UI.Services.CourseService>();
 builder.Services.AddScoped<IEnrollmentService, StudentCourseEnrollmentApp.UI.Services.EnrollmentService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
 await builder.Build().RunAsync();

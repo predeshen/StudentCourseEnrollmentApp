@@ -1,0 +1,89 @@
+@using StudentCourseEnrollmentApp.Core.Application.DTOs
+@using StudentCourseEnrollmentApp.UI.Services
+@using StudentCourseEnrollmentApp.Core.Application.Interfaces
+@inject IAdminService AdminService
+
+<div class="card">
+    <div class="card-header">
+        <h3>Enrollment Overview</h3>
+        <p class="text-muted">View all course enrollments across the system</p>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Student Name</th>
+                        <th>Email</th>
+                        <th>Course</th>
+                        <th>Enrollment Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var enrollment in enrollments)
+                    {
+                        <tr>
+                            <td>@enrollment.UserName</td>
+                            <td>@enrollment.UserEmail</td>
+                            <td>@enrollment.CourseTitle</td>
+                            <td>@enrollment.EnrollmentDate.ToString("MMM dd, yyyy")</td>
+                            <td>
+                                <button class="btn btn-sm btn-danger" @onclick="() => DeregisterUser(enrollment.UserId, enrollment.CourseId)">
+                                    Deregister
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (!enrollments.Any())
+        {
+            <div class="text-center py-4">
+                <p class="text-muted">No enrollments found.</p>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private List<AdminEnrollmentDTO> enrollments = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadEnrollments();
+    }
+
+    private async Task LoadEnrollments()
+    {
+        try
+        {
+            enrollments = (await AdminService.GetAllEnrollmentsAsync()).ToList();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading enrollments: {ex.Message}");
+        }
+    }
+
+    private async Task DeregisterUser(string userId, int courseId)
+    {
+        try
+        {
+            if (await AdminService.DeregisterUserFromCourseAsync(userId, courseId))
+            {
+                await LoadEnrollments();
+            }
+            else
+            {
+                Console.WriteLine("Failed to deregister user from course.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error deregistering user: {ex.Message}");
+        }
+    }
+}

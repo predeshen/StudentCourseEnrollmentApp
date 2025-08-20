@@ -1,0 +1,218 @@
+@using StudentCourseEnrollmentApp.Core.Application.DTOs
+@using StudentCourseEnrollmentApp.UI.Services
+@using StudentCourseEnrollmentApp.UI.Services.Interfaces
+@using StudentCourseEnrollmentApp.Core.Application.Interfaces
+@inject IAdminService AdminService
+@inject ICourseService CourseService
+
+<div class="card">
+    <div class="card-header">
+        <h3>Course Enrollments Management</h3>
+        <p class="text-muted">Select a course to view and manage enrollments</p>
+    </div>
+    <div class="card-body">
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <label for="courseSelect" class="form-label">Select Course</label>
+                <select class="form-select" id="courseSelect" @bind="selectedCourseId" @bind:after="LoadCourseEnrollments">
+                    <option value="0">-- Select a Course --</option>
+                    @foreach (var course in courses)
+                    {
+                        <option value="@course.CourseId">@course.CourseCode - @course.CourseTitle</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        @if (selectedCourseId > 0 && courseSummary != null)
+        {
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h4>@courseSummary.CourseTitle (@courseSummary.CourseCode)</h4>
+                    <p class="text-muted">Total Enrollments: @courseSummary.TotalEnrollments</p>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h5>Enrolled Students</h5>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Enrollment Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var user in courseSummary.EnrolledUsers)
+                                {
+                                    <tr>
+                                        <td>@user.FirstName @user.LastName</td>
+                                        <td>@user.Email</td>
+                                        <td>
+                                            @if (user.IsSuperAdmin)
+                                            {
+                                                <span class="badge bg-danger">Super Admin</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">Student</span>
+                                            }
+                                        </td>
+                                        <td>@user.EnrollmentDate.ToString("MMM dd, yyyy")</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-danger" @onclick="() => DeregisterUser(user.UserId)">
+                                                Deregister
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <h5>Enroll New Student</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="userSelect" class="form-label">Select User</label>
+                            <select class="form-select" id="userSelect" @bind="selectedUserId">
+                                <option value="">-- Select a User --</option>
+                                @foreach (var user in availableUsers)
+                                {
+                                    <option value="@user.Id">@user.FirstName @user.LastName (@user.Email)</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6 d-flex align-items-end">
+                            <button class="btn btn-success" @onclick="EnrollUser" disabled="@string.IsNullOrEmpty(selectedUserId)">
+                                Enroll User
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else if (selectedCourseId > 0)
+        {
+            <div class="text-center py-4">
+                <p class="text-muted">Loading course information...</p>
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-4">
+                <p class="text-muted">Please select a course to view enrollments.</p>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private List<CourseDTO> courses = new();
+    private List<ApplicationUserDTO> availableUsers = new();
+    private CourseEnrollmentSummaryDTO? courseSummary = null;
+    private int selectedCourseId = 0;
+    private string selectedUserId = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCourses();
+        await LoadAvailableUsers();
+    }
+
+    private async Task LoadCourses()
+    {
+        try
+        {
+            courses = (await CourseService.GetAllCoursesAsync()).ToList();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading courses: {ex.Message}");
+        }
+    }
+
+    private async Task LoadAvailableUsers()
+    {
+        try
+        {
+            availableUsers = (await AdminService.GetAllUsersAsync()).ToList();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading users: {ex.Message}");
+        }
+    }
+
+    private async Task LoadCourseEnrollments()
+    {
+        if (selectedCourseId > 0)
+        {
+            try
+            {
+                courseSummary = await AdminService.GetCourseEnrollmentSummaryAsync(selectedCourseId);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading course enrollments: {ex.Message}");
+                courseSummary = null;
+            }
+        }
+        else
+        {
+            courseSummary = null;
+        }
+    }
+
+    private async Task EnrollUser()
+    {
+        if (!string.IsNullOrEmpty(selectedUserId) && selectedCourseId > 0)
+        {
+            try
+            {
+                if (await AdminService.EnrollUserInCourseAsync(selectedUserId, selectedCourseId))
+                {
+                    selectedUserId = "";
+                    await LoadCourseEnrollments();
+                    await LoadAvailableUsers(); // Refresh available users
+                }
+                else
+                {
+                    Console.WriteLine("Failed to enroll user in course.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error enrolling user: {ex.Message}");
+            }
+        }
+    }
+
+    private async Task DeregisterUser(string userId)
+    {
+        try
+        {
+            if (await AdminService.DeregisterUserFromCourseAsync(userId, selectedCourseId))
+            {
+                await LoadCourseEnrollments();
+                await LoadAvailableUsers(); // Refresh available users
+            }
+            else
+            {
+                Console.WriteLine("Failed to deregister user from course.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error deregistering user: {ex.Message}");
+        }
+    }
+}

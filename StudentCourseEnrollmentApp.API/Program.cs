@@ -47,6 +47,31 @@ using (var scope = app.Services.CreateScope())
         );
         context.SaveChanges();
     }
+
+
+    if (!context.Users.Any())
+    {
+        var superAdmin = new ApplicationUser
+        {
+            UserName = "admin@admin.com",
+            Email = "admin@admin.com",
+            FirstName = "Super",
+            LastName = "Admin",
+            IsSuperAdmin = true,
+            EmailConfirmed = true
+        };
+
+        var result = await userManager.CreateAsync(superAdmin, "Admin123!");
+        if (!result.Succeeded)
+        {
+            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+            Console.WriteLine($"Failed to create super admin: {errors}");
+        }
+        else
+        {
+            Console.WriteLine("Super admin user created successfully");
+        }
+    }
 }
 
 // Configure the HTTP request pipeline.

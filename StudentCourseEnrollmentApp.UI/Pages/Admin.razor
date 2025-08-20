@@ -1,0 +1,121 @@
+@page "/admin"
+@using StudentCourseEnrollmentApp.Core.Application.DTOs
+@using StudentCourseEnrollmentApp.UI.Services
+@using StudentCourseEnrollmentApp.Core.Application.Interfaces
+@using Microsoft.AspNetCore.Components.Authorization
+@inject IAdminService AdminService
+@inject AuthenticationStateProvider AuthStateProvider
+@attribute [Authorize]
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">Admin Dashboard</h1>
+            
+            @if (isSuperAdmin)
+            {
+                <div class="row">
+                    <div class="col-md-3 mb-4">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h5 class="card-title">Course Management</h5>
+                                <p class="card-text">Add, edit, and delete courses</p>
+                                <button class="btn btn-primary" @onclick="() => currentView = AdminView.CourseManagement">
+                                    Manage Courses
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3 mb-4">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h5 class="card-title">User Management</h5>
+                                <p class="card-text">Create, edit, and delete users</p>
+                                <button class="btn btn-success" @onclick="() => currentView = AdminView.UserManagement">
+                                    Manage Users
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3 mb-4">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h5 class="card-title">Enrollment Overview</h5>
+                                <p class="card-text">View and manage enrollments</p>
+                                <button class="btn btn-info" @onclick="() => currentView = AdminView.EnrollmentOverview">
+                                    View Enrollments
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3 mb-4">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h5 class="card-title">Course Enrollments</h5>
+                                <p class="card-text">Manage specific course enrollments</p>
+                                <button class="btn btn-warning" @onclick="() => currentView = AdminView.CourseEnrollments">
+                                    Course Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-12">
+                        @switch (currentView)
+                        {
+                            case AdminView.CourseManagement:
+                                <CourseManagement />
+                                break;
+                            case AdminView.UserManagement:
+                                <UserManagement />
+                                break;
+                            case AdminView.EnrollmentOverview:
+                                <EnrollmentOverview />
+                                break;
+                            case AdminView.CourseEnrollments:
+                                <CourseEnrollments />
+                                break;
+                        }
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning" role="alert">
+                    <h4 class="alert-heading">Access Denied!</h4>
+                    <p>You do not have super admin privileges to access this page.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private bool isSuperAdmin = false;
+    private AdminView currentView = AdminView.CourseManagement;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            var isSuperAdminClaim = user.FindFirst("IsSuperAdmin")?.Value;
+            isSuperAdmin = bool.TryParse(isSuperAdminClaim, out var isAdmin) && isAdmin;
+        }
+    }
+
+    private enum AdminView
+    {
+        CourseManagement,
+        UserManagement,
+        EnrollmentOverview,
+        CourseEnrollments
+    }
+}
