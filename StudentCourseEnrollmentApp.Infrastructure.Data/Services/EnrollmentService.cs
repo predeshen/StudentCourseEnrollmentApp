@@ -57,18 +57,19 @@ namespace StudentCourseEnrollmentApp.Infrastructure.Data.Services
 
         public async Task<IEnumerable<CourseDTO>> GetEnrolledCoursesByStudentIdAsync(string userId)
         {
-            return await _context.Enrollments
+            var enrollments = await _context.Enrollments
+                .Include(e => e.Course)
                 .Where(e => e.UserId == userId)
-                .Include(e => e.Course) 
-                .Select(e => new CourseDTO
-                {
-                    CourseId = e.Course.CourseId,
-                    CourseTitle = e.Course.CourseTitle,
-                    CourseCode = e.Course.CourseCode,
-                    Description = e.Course.Description,
-                    Credits = e.Course.Credits
-                })
                 .ToListAsync();
+                
+            return enrollments.Select(e => new CourseDTO
+            {
+                CourseId = e.Course.CourseId,
+                CourseTitle = e.Course.CourseTitle,
+                CourseCode = e.Course.CourseCode,
+                Description = e.Course.Description,
+                Credits = e.Course.Credits
+            }).ToList();
         }
 
         public async Task<IEnumerable<CourseDTO>> GetAvailableCoursesByStudentIdAsync(string studentId)

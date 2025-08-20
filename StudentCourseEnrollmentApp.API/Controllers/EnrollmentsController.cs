@@ -23,7 +23,8 @@ namespace StudentCourseEnrollmentApp.API.Controllers
         [HttpPost("enroll/{courseId}")]
         public async Task<IActionResult> EnrollInCourse(int courseId)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.FindFirstValue("UserId");
+            
             if (string.IsNullOrEmpty(userId))
             {
                 return Unauthorized();
@@ -41,7 +42,7 @@ namespace StudentCourseEnrollmentApp.API.Controllers
         [HttpDelete("deregister/{courseId}")]
         public async Task<IActionResult> DeregisterFromCourse(int courseId)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.FindFirstValue("UserId");
             if (string.IsNullOrEmpty(userId))
             {
                 return Unauthorized();
@@ -59,7 +60,8 @@ namespace StudentCourseEnrollmentApp.API.Controllers
         [HttpGet("my-courses")]
         public async Task<ActionResult<IEnumerable<CourseDTO>>> GetMyEnrolledCourses()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.FindFirstValue("UserId");
+            
             if (string.IsNullOrEmpty(userId))
             {
                 return Unauthorized();
@@ -72,7 +74,7 @@ namespace StudentCourseEnrollmentApp.API.Controllers
         [HttpGet("available-courses")]
         public async Task<ActionResult<IEnumerable<CourseDTO>>> GetAvailableCourses()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.FindFirstValue("UserId");
             if (string.IsNullOrEmpty(userId))
             {
                 return Unauthorized();

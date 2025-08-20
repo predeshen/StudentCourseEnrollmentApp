@@ -20,11 +20,16 @@ namespace StudentCourseEnrollmentApp.API.Controllers
 
         private bool IsSuperAdmin()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userId))
-                return false;
+            var userId = User.FindFirstValue("UserId");
             var isSuperAdminClaim = User.FindFirstValue("IsSuperAdmin");
-            return bool.TryParse(isSuperAdminClaim, out var isAdmin) && isAdmin;
+            
+            if (string.IsNullOrEmpty(userId))
+            {
+                return false;
+            }
+            
+            var result = bool.TryParse(isSuperAdminClaim, out var isAdmin) && isAdmin;
+            return result;
         }
 
         // Course Management
@@ -93,12 +98,14 @@ namespace StudentCourseEnrollmentApp.API.Controllers
         public async Task<IActionResult> CreateUser([FromBody] CreateUserDTO createUserDto)
         {
             if (!IsSuperAdmin())
+            {
                 return Forbid();
+            }
 
             try
             {
                 var user = await _adminService.CreateUserAsync(createUserDto);
-                return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
+                return CreatedAtAction(nameof(GetUserById), new { userId = user.Id }, user);
             }
             catch (Exception ex)
             {
@@ -207,7 +214,9 @@ namespace StudentCourseEnrollmentApp.API.Controllers
         public async Task<IActionResult> GetAllEnrollments()
         {
             if (!IsSuperAdmin())
+            {
                 return Forbid();
+            }
 
             var enrollments = await _adminService.GetAllEnrollmentsAsync();
             return Ok(enrollments);

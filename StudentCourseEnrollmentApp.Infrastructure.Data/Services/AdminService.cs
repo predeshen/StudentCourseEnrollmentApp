@@ -208,7 +208,9 @@ namespace StudentCourseEnrollmentApp.Infrastructure.Data.Services
                 .AnyAsync(e => e.UserId == userId && e.CourseId == courseId);
 
             if (isEnrolled)
+            {
                 return false;
+            }
 
             var enrollment = new Enrollment
             {
@@ -268,19 +270,20 @@ namespace StudentCourseEnrollmentApp.Infrastructure.Data.Services
 
         public async Task<IEnumerable<AdminEnrollmentDTO>> GetAllEnrollmentsAsync()
         {
-            return await _context.Enrollments
+            var enrollments = await _context.Enrollments
                 .Include(e => e.User)
                 .Include(e => e.Course)
-                .Select(e => new AdminEnrollmentDTO
-                {
-                    UserId = e.UserId,
-                    CourseId = e.CourseId,
-                    UserEmail = e.User.Email,
-                    UserName = $"{e.User.FirstName} {e.User.LastName}",
-                    CourseTitle = e.Course.CourseTitle,
-                    EnrollmentDate = e.EnrollmentDate
-                })
                 .ToListAsync();
+                
+            return enrollments.Select(e => new AdminEnrollmentDTO
+            {
+                UserId = e.UserId,
+                CourseId = e.CourseId,
+                UserEmail = e.User.Email,
+                UserName = $"{e.User.FirstName} {e.User.LastName}",
+                CourseTitle = e.Course.CourseTitle,
+                EnrollmentDate = e.EnrollmentDate
+            }).ToList();
         }
     }
 }

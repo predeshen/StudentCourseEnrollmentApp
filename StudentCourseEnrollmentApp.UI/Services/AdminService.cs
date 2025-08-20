@@ -47,9 +47,23 @@ namespace StudentCourseEnrollmentApp.UI.Services
         // User Management
         public async Task<ApplicationUserDTO> CreateUserAsync(CreateUserDTO createUserDto)
         {
-            var response = await _httpClient.PostAsJsonAsync("api/admin/users", createUserDto);
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<ApplicationUserDTO>() ?? new ApplicationUserDTO();
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync("api/admin/users", createUserDto);
+                
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    throw new HttpRequestException($"API Error: {response.StatusCode} - {errorContent}");
+                }
+                
+                var result = await response.Content.ReadFromJsonAsync<ApplicationUserDTO>();
+                return result ?? new ApplicationUserDTO();
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
         public async Task<ApplicationUserDTO> UpdateUserAsync(UpdateUserDTO updateUserDto)
