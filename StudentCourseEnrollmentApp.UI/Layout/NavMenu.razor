@@ -1,4 +1,4 @@
-﻿@inject CustomAuthStateProvider AuthStateProvider
+﻿@inject AuthenticationStateProvider AuthStateProvider
 @inject NavigationManager NavManager
 @using Microsoft.AspNetCore.Components.Authorization
 
@@ -32,7 +32,10 @@
 @code {
     private async Task Logout()
     {
-        await AuthStateProvider.MarkUserAsLoggedOut();
+        if (AuthStateProvider is CustomAuthStateProvider customAuthStateProvider)
+        {
+            await customAuthStateProvider.MarkUserAsLoggedOut();
+        }
         NavManager.NavigateTo("/", true);
     }
 }

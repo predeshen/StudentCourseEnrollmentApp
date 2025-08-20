@@ -71,7 +71,7 @@
 
     private async Task HandleLogin()
     {
-        var result = await AuthService.LoginAsync(LoginModel);
+        var result = await AuthService.LoginUserAsync(LoginModel);
         if (result.Result)
         {
             await AuthStateProvider.MarkUserAsAuthenticated(result.Token);
@@ -84,7 +84,7 @@
 
     private async Task HandleRegister()
     {
-        var result = await AuthService.RegisterAsync(RegisterModel);
+        var result = await AuthService.RegisterUserAsync(RegisterModel);
         if (result.Result)
         {
             if (result.Result && result.Token != null)

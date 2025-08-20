@@ -4,7 +4,7 @@ namespace StudentCourseEnrollmentApp.UI.Services.Interfaces
 {
     public interface IAuthenticationService
     {
-        Task<AuthResultDTO> RegisterAsync(UserRegistrationRequestDTO user);
-        Task<AuthResultDTO> LoginAsync(UserLoginRequestDTO user);
+        Task<AuthResultDTO> RegisterUserAsync(UserRegistrationRequestDTO request);
+        Task<AuthResultDTO> LoginUserAsync(UserLoginRequestDTO request);
     }
 }

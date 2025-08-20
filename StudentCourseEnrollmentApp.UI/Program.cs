@@ -5,7 +5,6 @@ using StudentCourseEnrollmentApp.Infrastructure.Data;
 using StudentCourseEnrollmentApp.UI;
 using StudentCourseEnrollmentApp.UI.Services;
 using StudentCourseEnrollmentApp.UI.Services.Interfaces;
-using IAuthenticationService = StudentCourseEnrollmentApp.Core.Application.IAuthenticationService;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -15,7 +14,8 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https:/
 
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>(); 
-builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
-builder.Services.AddScoped<ICourseService, CourseService>();
-builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
+builder.Services.AddScoped<CustomAuthStateProvider>();
+builder.Services.AddScoped<IAuthenticationService, StudentCourseEnrollmentApp.UI.Services.AuthenticationService>();
+builder.Services.AddScoped<ICourseService, StudentCourseEnrollmentApp.UI.Services.CourseService>();
+builder.Services.AddScoped<IEnrollmentService, StudentCourseEnrollmentApp.UI.Services.EnrollmentService>();
 await builder.Build().RunAsync();
