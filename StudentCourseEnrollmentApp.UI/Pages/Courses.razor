@@ -1,5 +1,63 @@
-﻿<h3>Courses</h3>
+﻿@page "/courses"
+@using Microsoft.AspNetCore.Authorization
+@using StudentCourseEnrollmentApp.Core.Application.DTOs
+@inject StudentCourseEnrollmentApp.UI.Services.Interfaces.ICourseService CourseService
+@inject StudentCourseEnrollmentApp.UI.Services.Interfaces.IEnrollmentService EnrollmentService
+@attribute [Authorize] // Restrict access to authenticated users
+@using Microsoft.AspNetCore.Components.Authorization
+
+<PageTitle>Available Courses</PageTitle>
+
+<h3>Available Courses</h3>
+
+@if (courses == null)
+{
+    <p><em>Loading courses...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Code</th>
+            <th>Credits</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var course in courses)
+        {
+            <tr>
+                <td>@course.CourseTitle</td>
+                <td>@course.CourseCode</td>
+                <td>@course.Credits</td>
+                <td>
+                    <button class="btn btn-primary btn-sm" @onclick="@(() => EnrollInCourse(course.CourseId))">Enroll</button>   
+                </td>
+                </tr>
+        }
+        </tbody>
+    </table>
+}
 
 @code {
+    private IEnumerable<CourseDTO> courses;
 
+    protected override async Task OnInitializedAsync()
+    {
+        courses = await CourseService.GetAllCoursesAsync();
+    }
+    
+    private async Task EnrollInCourse(int courseId)
+    {
+        var result = await EnrollmentService.EnrollInCourseAsync(courseId);
+        if (result)
+        {
+            courses = await CourseService.GetAllCoursesAsync();
+        }
+        else
+        {
+        }
+    }
 }

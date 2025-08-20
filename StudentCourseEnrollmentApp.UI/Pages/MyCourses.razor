@@ -1,5 +1,65 @@
-﻿<h3>MyCourses</h3>
+﻿@page "/my-courses"
+@using Microsoft.AspNetCore.Authorization
+@using StudentCourseEnrollmentApp.Core.Application.DTOs
+@inject StudentCourseEnrollmentApp.UI.Services.Interfaces.IEnrollmentService EnrollmentService
+@attribute [Authorize]
+@using Microsoft.AspNetCore.Components.Authorization
+
+<PageTitle>My Courses</PageTitle>
+
+<h3>My Enrolled Courses</h3>
+
+@if (enrolledCourses == null)
+{
+    <p><em>Loading your courses...</em></p>
+}
+else if (!enrolledCourses.Any())
+{
+    <p>You are not currently enrolled in any courses.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Code</th>
+            <th>Credits</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var course in enrolledCourses)
+        {
+            <tr>
+                <td>@course.CourseTitle</td>
+                <td>@course.CourseCode</td>
+                <td>@course.Credits</td>
+                <td>
+                    <button class="btn btn-danger btn-sm" @onclick="@(() => DeregisterFromCourse(course.CourseId))">Deregister</button>                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
 
 @code {
+    private IEnumerable<CourseDTO> enrolledCourses;
 
+    protected override async Task OnInitializedAsync()
+    {
+        enrolledCourses = await EnrollmentService.GetMyCoursesAsync();
+    }
+
+    private async Task DeregisterFromCourse(int courseId)
+    {
+        var result = await EnrollmentService.DeregisterFromCourseAsync(courseId);
+        if (result)
+        {
+            enrolledCourses = await EnrollmentService.GetMyCoursesAsync();
+        }
+        else
+        {
+        }
+    }
 }

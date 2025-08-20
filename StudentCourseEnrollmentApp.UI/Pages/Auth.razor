@@ -87,8 +87,11 @@
         var result = await AuthService.RegisterAsync(RegisterModel);
         if (result.Result)
         {
-            await AuthStateProvider.MarkUserAsAuthenticated(result.Token);
-            NavManager.NavigateTo("/");
+            if (result.Result && result.Token != null)
+            {
+                await AuthStateProvider.MarkUserAsAuthenticated(result.Token);
+                NavManager.NavigateTo("/");
+            }
         }
         else
         {
