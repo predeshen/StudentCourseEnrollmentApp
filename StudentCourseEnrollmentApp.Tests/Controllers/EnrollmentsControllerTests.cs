@@ -37,7 +37,7 @@ public class EnrollmentsControllerTests
     {
         // Arrange
         var courses = new List<CourseDTO> { new CourseDTO { CourseId = 1, CourseTitle = "Test Course" } };
-        _mockEnrollmentService.Setup(s => s.GetEnrolledCoursesByStudentIdAsync(1))
+        _mockEnrollmentService.Setup(s => s.GetEnrolledCoursesByStudentIdAsync("1"))
             .ReturnsAsync(courses);
 
         // Act
@@ -54,7 +54,7 @@ public class EnrollmentsControllerTests
     {
         // Arrange
         int courseId = 1;
-        _mockEnrollmentService.Setup(s => s.DeregisterStudentFromCourseAsync(1, courseId))
+        _mockEnrollmentService.Setup(s => s.DeregisterStudentFromCourseAsync("1", courseId))
             .ReturnsAsync(true);
 
         // Act
@@ -69,7 +69,7 @@ public class EnrollmentsControllerTests
     {
         // Arrange
         int courseId = 99;
-        _mockEnrollmentService.Setup(s => s.DeregisterStudentFromCourseAsync(1, courseId))
+        _mockEnrollmentService.Setup(s => s.DeregisterStudentFromCourseAsync("1", courseId))
             .ReturnsAsync(false);
 
         // Act
@@ -77,5 +77,72 @@ public class EnrollmentsControllerTests
 
         // Assert
         Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
+    }
+
+    [Test]
+    public async Task EnrollInCourse_ShouldReturnOk_WhenSuccessful()
+    {
+        // Arrange
+        int courseId = 1;
+        _mockEnrollmentService.Setup(s => s.EnrollStudentInCourseAsync("1", courseId))
+            .ReturnsAsync(true);
+
+        // Act
+        var result = await _controller.EnrollInCourse(courseId);
+
+        // Assert
+        Assert.That(result, Is.InstanceOf<OkObjectResult>());
+        var okResult = result as OkObjectResult;
+        Assert.That(okResult.Value, Is.EqualTo("Enrollment successful."));
+    }
+
+    [Test]
+    public async Task EnrollInCourse_ShouldReturnBadRequest_WhenAlreadyEnrolled()
+    {
+        // Arrange
+        int courseId = 1;
+        _mockEnrollmentService.Setup(s => s.EnrollStudentInCourseAsync("1", courseId))
+            .ReturnsAsync(false);
+
+        // Act
+        var result = await _controller.EnrollInCourse(courseId);
+
+        // Assert
+        Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
+        var badRequestResult = result as BadRequestObjectResult;
+        Assert.That(badRequestResult.Value, Is.EqualTo("Enrollment failed. You may already be enrolled in this course."));
+    }
+
+    [Test]
+    public async Task GetAvailableCourses_ShouldReturnOkWithCourses()
+    {
+        // Arrange
+        var courses = new List<CourseDTO> { new CourseDTO { CourseId = 2, CourseTitle = "Available Course" } };
+        _mockEnrollmentService.Setup(s => s.GetAvailableCoursesByStudentIdAsync("1"))
+            .ReturnsAsync(courses);
+
+        // Act
+        var result = await _controller.GetAvailableCourses();
+
+        // Assert
+        Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
+        var okResult = result.Result as OkObjectResult;
+        Assert.That(okResult.Value, Is.EqualTo(courses));
+    }
+
+    [Test]
+    public async Task GetMyEnrolledCourses_ShouldReturnUnauthorized_WhenUserIdIsMissing()
+    {
+        // Arrange
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal(new ClaimsIdentity()) }
+        };
+
+        // Act
+        var result = await _controller.GetMyEnrolledCourses();
+
+        // Assert
+        Assert.That(result.Result, Is.InstanceOf<UnauthorizedResult>());
     }
 }

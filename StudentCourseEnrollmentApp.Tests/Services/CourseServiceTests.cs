@@ -57,6 +57,50 @@ public class CourseServiceTests
         Assert.That(foundCourse.CourseTitle, Is.EqualTo("Find Me"));
     }
 
+    [Test]
+    public async Task GetCourseByIdAsync_ShouldReturnNull_WhenCourseDoesNotExist()
+    {
+        // Arrange
+        int nonExistentCourseId = 999;
+
+        // Act
+        var foundCourse = await _courseService.GetCourseByIdAsync(nonExistentCourseId);
+
+        // Assert
+        Assert.That(foundCourse, Is.Null);
+    }
+
+    [Test]
+    public async Task GetAllCoursesAsync_ShouldReturnEmptyList_WhenNoCoursesExist()
+    {
+        // Arrange
+        // Clear all courses manually since seed data is configured in OnModelCreating
+        _context.Courses.RemoveRange(_context.Courses);
+        await _context.SaveChangesAsync();
+
+        // Act
+        var courses = await _courseService.GetAllCoursesAsync();
+
+        // Assert
+        Assert.That(courses.Count(), Is.EqualTo(0));
+    }
+
+    [Test]
+    public async Task GetAllCoursesAsync_ShouldReturnSeededCourses_WhenDatabaseHasSeedData()
+    {
+        // Arrange
+        // The database will have seed data from OnModelCreating
+
+        // Act
+        var courses = await _courseService.GetAllCoursesAsync();
+
+        // Assert
+        Assert.That(courses.Count(), Is.GreaterThan(0));
+        Assert.That(courses.Any(c => c.CourseTitle == "English For Beginners"), Is.True);
+        Assert.That(courses.Any(c => c.CourseTitle == "Mathematic Fundamentals"), Is.True);
+        Assert.That(courses.Any(c => c.CourseTitle == "Afrikaans Fundamentals"), Is.True);
+    }
+
     [TearDown]
     public void TearDown()
     {
