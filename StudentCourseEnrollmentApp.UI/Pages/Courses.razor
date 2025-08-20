@@ -1,63 +1,122 @@
 ﻿@page "/courses"
 @using Microsoft.AspNetCore.Authorization
 @using StudentCourseEnrollmentApp.Core.Application.DTOs
+@using StudentCourseEnrollmentApp.UI.Services
 @inject StudentCourseEnrollmentApp.UI.Services.Interfaces.ICourseService CourseService
 @inject StudentCourseEnrollmentApp.UI.Services.Interfaces.IEnrollmentService EnrollmentService
+@inject IToastService ToastService
 @attribute [Authorize] // Restrict access to authenticated users
 @using Microsoft.AspNetCore.Components.Authorization
 
-<PageTitle>Available Courses</PageTitle>
+<PageTitle>Available Courses - Student Course Enrollment App</PageTitle>
 
-<h3>Available Courses</h3>
+<div class="courses-container fade-in">
+    <div class="courses-header">
+        <h1 class="courses-title">Available Courses</h1>
+        <p class="courses-subtitle">Discover and enroll in exciting courses to expand your knowledge and skills</p>
+    </div>
 
-@if (courses == null)
-{
-    <p><em>Loading courses...</em></p>
-}
-else
-{
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Title</th>
-            <th>Code</th>
-            <th>Credits</th>
-            <th>Action</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var course in courses)
-        {
-            <tr>
-                <td>@course.CourseTitle</td>
-                <td>@course.CourseCode</td>
-                <td>@course.Credits</td>
-                <td>
-                    <button class="btn btn-primary btn-sm" @onclick="@(() => EnrollInCourse(course.CourseId))">Enroll</button>   
-                </td>
-                </tr>
-        }
-        </tbody>
-    </table>
-}
+    @if (courses == null)
+    {
+        <div class="loading-container">
+            <div class="loading"></div>
+            <p>Loading courses...</p>
+        </div>
+    }
+    else if (!courses.Any())
+    {
+        <div class="empty-state">
+            <div class="empty-state-icon">
+                <span class="oi oi-book"></span>
+            </div>
+            <h3>No Courses Available</h3>
+            <p>There are currently no courses available for enrollment. Please check back later.</p>
+        </div>
+    }
+    else
+    {
+        <div class="courses-grid">
+            @foreach (var course in courses)
+            {
+                <div class="course-card">
+                    <div class="course-header">
+                        <div class="course-icon">
+                            <span class="oi oi-book"></span>
+                        </div>
+                        <div class="course-badge">
+                            <span class="badge badge-info">@course.Credits Credits</span>
+                        </div>
+                    </div>
+                    <div class="course-content">
+                        <h3 class="course-title">@course.CourseTitle</h3>
+                        <p class="course-code">@course.CourseCode</p>
+                        @if (!string.IsNullOrEmpty(course.Description))
+                        {
+                            <p class="course-description">@course.Description</p>
+                        }
+                    </div>
+                    <div class="course-actions">
+                        <button class="btn btn-primary btn-sm" 
+                                @onclick="@(() => EnrollInCourse(course.CourseId))"
+                                disabled="@IsEnrolling">
+                            @if (IsEnrolling)
+                            {
+                                <span class="loading"></span>
+                                <span>Enrolling...</span>
+                            }
+                            else
+                            {
+                                <span class="oi oi-plus"></span>
+                                <span>Enroll</span>
+                            }
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
 
 @code {
     private IEnumerable<CourseDTO> courses;
+    private bool IsEnrolling = false;
 
     protected override async Task OnInitializedAsync()
     {
-        courses = await CourseService.GetAllCoursesAsync();
+        try
+        {
+            courses = await CourseService.GetAllCoursesAsync();
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError("Error", "Failed to load courses. Please try again.");
+        }
     }
     
     private async Task EnrollInCourse(int courseId)
     {
-        var result = await EnrollmentService.EnrollInCourseAsync(courseId);
-        if (result)
+        IsEnrolling = true;
+        try
         {
-            courses = await CourseService.GetAllCoursesAsync();
+            var result = await EnrollmentService.EnrollInCourseAsync(courseId);
+            if (result)
+            {
+                ToastService.ShowSuccess("Enrollment Successful!", "You have been successfully enrolled in the course.");
+                // Refresh the courses list
+                courses = await CourseService.GetAllCoursesAsync();
+            }
+            else
+            {
+                ToastService.ShowWarning("Enrollment Failed", "You may already be enrolled in this course or there was an issue with enrollment.");
+            }
         }
-        else
+        catch (Exception ex)
         {
+            ToastService.ShowError("Enrollment Error", "An error occurred during enrollment. Please try again.");
+        }
+        finally
+        {
+            IsEnrolling = false;
         }
     }
 }

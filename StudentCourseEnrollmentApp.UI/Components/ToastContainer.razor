@@ -1,0 +1,66 @@
+@using StudentCourseEnrollmentApp.UI.Services
+@inject IToastService ToastService
+@implements IDisposable
+
+<div class="toast-container">
+    @foreach (var toast in ToastService.Toasts)
+    {
+        <div class="toast @GetToastClass(toast.Type) @(toast.IsVisible ? "show" : "")" 
+             @key="toast.Id"
+             @onclick="() => ToastService.RemoveToast(toast.Id)">
+            <div class="toast-header">
+                <div class="toast-icon">
+                    @GetToastIcon(toast.Type)
+                </div>
+                <div class="toast-content">
+                    <h6 class="toast-title">@toast.Title</h6>
+                    <p class="toast-message">@toast.Message</p>
+                </div>
+                <button class="toast-close" @onclick="() => ToastService.RemoveToast(toast.Id)">
+                    <span>&times;</span>
+                </button>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        ToastService.OnToastsChanged += OnToastsChanged;
+    }
+
+    public void Dispose()
+    {
+        ToastService.OnToastsChanged -= OnToastsChanged;
+    }
+
+    private void OnToastsChanged(List<ToastMessage> toasts)
+    {
+        StateHasChanged();
+    }
+
+    private string GetToastClass(ToastType type)
+    {
+        return type switch
+        {
+            ToastType.Success => "toast-success",
+            ToastType.Error => "toast-error",
+            ToastType.Warning => "toast-warning",
+            ToastType.Info => "toast-info",
+            _ => "toast-info"
+        };
+    }
+
+    private RenderFragment GetToastIcon(ToastType type)
+    {
+        return type switch
+        {
+            ToastType.Success => @<span class="oi oi-check-circle"></span>,
+            ToastType.Error => @<span class="oi oi-x-circle"></span>,
+            ToastType.Warning => @<span class="oi oi-warning"></span>,
+            ToastType.Info => @<span class="oi oi-info"></span>,
+            _ => @<span class="oi oi-info"></span>
+        };
+    }
+}

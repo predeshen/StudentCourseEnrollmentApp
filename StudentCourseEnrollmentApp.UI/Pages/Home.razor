@@ -4,10 +4,114 @@
 @attribute [Authorize]
 @inject NavigationManager NavManager
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Home - Student Course Enrollment App</PageTitle>
 
-<h1>Welcome to the Course Enrollment App</h1>
+<div class="home-container fade-in">
+    <div class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">Welcome to Your Learning Journey</h1>
+            <p class="hero-subtitle">Discover amazing courses, expand your knowledge, and achieve your educational goals with our comprehensive course enrollment platform.</p>
+            <div class="hero-actions">
+                <button class="btn btn-primary btn-lg" @onclick="NavigateToCourses">
+                    <span class="oi oi-list-rich"></span>
+                    Browse Courses
+                </button>
+                <button class="btn btn-outline btn-lg" @onclick="NavigateToMyCourses">
+                    <span class="oi oi-book"></span>
+                    My Courses
+                </button>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="floating-elements">
+                <div class="floating-element element-1">
+                    <span class="oi oi-graduation-cap"></span>
+                </div>
+                <div class="floating-element element-2">
+                    <span class="oi oi-book"></span>
+                </div>
+                <div class="floating-element element-3">
+                    <span class="oi oi-lightbulb"></span>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<p>Welcome! You are now logged in and can access all features of the application.</p>
+    <div class="features-section">
+        <h2 class="section-title">Why Choose Our Platform?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <span class="oi oi-graph"></span>
+                </div>
+                <h3>Track Progress</h3>
+                <p>Monitor your learning journey with detailed progress tracking and analytics.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <span class="oi oi-people"></span>
+                </div>
+                <h3>Expert Instructors</h3>
+                <p>Learn from industry professionals and experienced educators.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <span class="oi oi-clock"></span>
+                </div>
+                <h3>Flexible Learning</h3>
+                <p>Study at your own pace with 24/7 access to course materials.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <span class="oi oi-award"></span>
+                </div>
+                <h3>Certificates</h3>
+                <p>Earn certificates upon completion to showcase your achievements.</p>
+            </div>
+        </div>
+    </div>
 
-<p>Use the navigation menu on the left to browse courses and manage your enrollments.</p>
+    <div class="quick-actions-section">
+        <h2 class="section-title">Quick Actions</h2>
+        <div class="quick-actions-grid">
+            <div class="quick-action-card" @onclick="NavigateToCourses">
+                <div class="quick-action-icon">
+                    <span class="oi oi-search"></span>
+                </div>
+                <h4>Find Courses</h4>
+                <p>Browse our extensive catalog of courses</p>
+            </div>
+            <div class="quick-action-card" @onclick="NavigateToMyCourses">
+                <div class="quick-action-icon">
+                    <span class="oi oi-list"></span>
+                </div>
+                <h4>My Enrollments</h4>
+                <p>View and manage your current courses</p>
+            </div>
+            <div class="quick-action-card" @onclick="NavigateToAdmin">
+                <div class="quick-action-icon">
+                    <span class="oi oi-cog"></span>
+                </div>
+                <h4>Admin Panel</h4>
+                <p>Manage users and course enrollments</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private void NavigateToCourses()
+    {
+        NavManager.NavigateTo("/courses");
+    }
+
+    private void NavigateToMyCourses()
+    {
+        NavManager.NavigateTo("/my-courses");
+    }
+
+    private void NavigateToAdmin()
+    {
+        NavManager.NavigateTo("/admin");
+    }
+}
