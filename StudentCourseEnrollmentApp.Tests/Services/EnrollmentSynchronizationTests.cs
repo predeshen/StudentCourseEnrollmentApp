@@ -260,28 +260,28 @@ namespace StudentCourseEnrollmentApp.Tests.Services
 
             // Act: Admin enrolls user in first course
             var adminEnrollment1 = await _adminService.EnrollUserInCourseAsync(userId, courseId1);
-            Assert.IsTrue(adminEnrollment1, "First admin enrollment should succeed");
+            Assert.That(adminEnrollment1, Is.True, "First admin enrollment should succeed");
 
             // Act: Student enrolls themselves in second course
             var studentEnrollment2 = await _enrollmentService.EnrollStudentInCourseAsync(userId, course2.CourseId);
-            Assert.IsTrue(studentEnrollment2, "Second student enrollment should succeed");
+            Assert.That(studentEnrollment2, Is.True, "Second student enrollment should succeed");
 
             // Assert: Both enrollments should be visible to student
             var studentEnrollments = await _enrollmentService.GetEnrolledCoursesByStudentIdAsync(userId);
-            Assert.AreEqual(2, studentEnrollments.Count(), "Student should see 2 enrollments");
+            Assert.That(studentEnrollments.Count(), Is.EqualTo(2), "Student should see 2 enrollments");
 
             // Assert: Both enrollments should be visible to admin
             var adminEnrollments = await _adminService.GetAllEnrollmentsAsync();
-            Assert.AreEqual(2, adminEnrollments.Count(), "Admin should see 2 enrollments");
+            Assert.That(adminEnrollments.Count(), Is.EqualTo(2), "Admin should see 2 enrollments");
 
             // Verify specific courses
             var studentCourseIds = studentEnrollments.Select(c => c.CourseId).ToList();
-            Assert.Contains(courseId1, studentCourseIds, "Student should see first course");
-            Assert.Contains(course2.CourseId, studentCourseIds, "Student should see second course");
+            Assert.That(studentCourseIds, Does.Contain(courseId1), "Student should see first course");
+            Assert.That(studentCourseIds, Does.Contain(course2.CourseId), "Student should see second course");
 
             var adminCourseIds = adminEnrollments.Select(e => e.CourseId).ToList();
-            Assert.Contains(courseId1, adminCourseIds, "Admin should see first course");
-            Assert.Contains(course2.CourseId, adminCourseIds, "Admin should see second course");
+            Assert.That(adminCourseIds, Does.Contain(courseId1), "Admin should see first course");
+            Assert.That(adminCourseIds, Does.Contain(course2.CourseId), "Admin should see second course");
         }
     }
 }

@@ -39,7 +39,7 @@ namespace StudentCourseEnrollmentApp.Tests.Controllers
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, "admin-user-123"),
+                new Claim("UserId", "admin-user-123"),
                 new Claim(ClaimTypes.Email, "admin@admin.com"),
                 new Claim(ClaimTypes.Name, "admin@admin.com")
             };
@@ -115,7 +115,7 @@ namespace StudentCourseEnrollmentApp.Tests.Controllers
             var result = await _controller.CreateUser(createUserDto);
 
             // Assert
-            Assert.IsInstanceOf<ForbidResult>(result);
+            Assert.That(result, Is.InstanceOf<ForbidResult>());
         }
 
         [Test]
@@ -139,9 +139,9 @@ namespace StudentCourseEnrollmentApp.Tests.Controllers
             var result = await _controller.CreateUser(createUserDto);
 
             // Assert
-            Assert.IsInstanceOf<BadRequestObjectResult>(result);
+            Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
             var badRequestResult = result as BadRequestObjectResult;
-            Assert.AreEqual("User creation failed", badRequestResult.Value);
+            Assert.That(badRequestResult.Value, Is.EqualTo("User creation failed"));
         }
 
         [Test]
@@ -173,9 +173,9 @@ namespace StudentCourseEnrollmentApp.Tests.Controllers
             var result = await _controller.CreateCourse(createCourseDto);
 
             // Assert
-            Assert.IsInstanceOf<CreatedAtActionResult>(result);
+            Assert.That(result, Is.InstanceOf<CreatedAtActionResult>());
             var createdAtResult = result as CreatedAtActionResult;
-            Assert.AreEqual(expectedCourse, createdAtResult.Value);
+            Assert.That(createdAtResult.Value, Is.EqualTo(expectedCourse));
         }
 
         [Test]
@@ -195,7 +195,7 @@ namespace StudentCourseEnrollmentApp.Tests.Controllers
             var result = await _controller.CreateCourse(createCourseDto);
 
             // Assert
-            Assert.IsInstanceOf<ForbidResult>(result);
+            Assert.That(result, Is.InstanceOf<ForbidResult>());
         }
 
         [Test]
@@ -216,9 +216,9 @@ namespace StudentCourseEnrollmentApp.Tests.Controllers
             var result = await _controller.EnrollUserInCourse(enrollmentRequest);
 
             // Assert
-            Assert.IsInstanceOf<OkObjectResult>(result);
+            Assert.That(result, Is.InstanceOf<OkObjectResult>());
             var okResult = result as OkObjectResult;
-            Assert.AreEqual("User enrolled successfully", okResult.Value);
+            Assert.That(okResult.Value, Is.EqualTo("User enrolled successfully"));
         }
 
         [Test]
@@ -239,9 +239,9 @@ namespace StudentCourseEnrollmentApp.Tests.Controllers
             var result = await _controller.EnrollUserInCourse(enrollmentRequest);
 
             // Assert
-            Assert.IsInstanceOf<BadRequestObjectResult>(result);
+            Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
             var badRequestResult = result as BadRequestObjectResult;
-            Assert.AreEqual("User is already enrolled in this course or invalid request", badRequestResult.Value);
+            Assert.That(badRequestResult.Value, Is.EqualTo("User is already enrolled in this course or invalid request"));
         }
 
         [Test]
@@ -262,9 +262,9 @@ namespace StudentCourseEnrollmentApp.Tests.Controllers
             var result = await _controller.DeregisterUserFromCourse(enrollmentRequest);
 
             // Assert
-            Assert.IsInstanceOf<OkObjectResult>(result);
+            Assert.That(result, Is.InstanceOf<OkObjectResult>());
             var okResult = result as OkObjectResult;
-            Assert.AreEqual("User deregistered successfully", okResult.Value);
+            Assert.That(okResult.Value, Is.EqualTo("User deregistered successfully"));
         }
 
         [Test]
@@ -285,9 +285,9 @@ namespace StudentCourseEnrollmentApp.Tests.Controllers
             var result = await _controller.DeregisterUserFromCourse(enrollmentRequest);
 
             // Assert
-            Assert.IsInstanceOf<BadRequestObjectResult>(result);
+            Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
             var badRequestResult = result as BadRequestObjectResult;
-            Assert.AreEqual("Enrollment not found or invalid request", badRequestResult.Value);
+            Assert.That(badRequestResult.Value, Is.EqualTo("Enrollment not found or invalid request"));
         }
 
         [Test]
@@ -332,9 +332,9 @@ namespace StudentCourseEnrollmentApp.Tests.Controllers
             var result = await _controller.GetCourseEnrollmentSummary(courseId);
 
             // Assert
-            Assert.IsInstanceOf<OkObjectResult>(result);
+            Assert.That(result, Is.InstanceOf<OkObjectResult>());
             var okResult = result as OkObjectResult;
-            Assert.AreEqual(expectedSummary, okResult.Value);
+            Assert.That(okResult.Value, Is.EqualTo(expectedSummary));
         }
 
         [Test]
@@ -351,9 +351,9 @@ namespace StudentCourseEnrollmentApp.Tests.Controllers
             var result = await _controller.GetCourseEnrollmentSummary(courseId);
 
             // Assert
-            Assert.IsInstanceOf<BadRequestObjectResult>(result);
+            Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
             var badRequestResult = result as BadRequestObjectResult;
-            Assert.AreEqual("Course not found", badRequestResult.Value);
+            Assert.That(badRequestResult.Value, Is.EqualTo("Course not found"));
         }
 
         [Test]
@@ -390,9 +390,9 @@ namespace StudentCourseEnrollmentApp.Tests.Controllers
             var result = await _controller.GetAllEnrollments();
 
             // Assert
-            Assert.IsInstanceOf<OkObjectResult>(result);
+            Assert.That(result, Is.InstanceOf<OkObjectResult>());
             var okResult = result as OkObjectResult;
-            Assert.AreEqual(expectedEnrollments, okResult.Value);
+            Assert.That(okResult.Value, Is.EqualTo(expectedEnrollments));
         }
 
         [Test]
@@ -429,9 +429,9 @@ namespace StudentCourseEnrollmentApp.Tests.Controllers
             var result = await _controller.GetAllUsers();
 
             // Assert
-            Assert.IsInstanceOf<OkObjectResult>(result);
+            Assert.That(result, Is.InstanceOf<OkObjectResult>());
             var okResult = result as OkObjectResult;
-            Assert.AreEqual(expectedUsers, okResult.Value);
+            Assert.That(okResult.Value, Is.EqualTo(expectedUsers));
         }
 
         [Test]
@@ -457,9 +457,9 @@ namespace StudentCourseEnrollmentApp.Tests.Controllers
             var result = await _controller.GetUserById(userId);
 
             // Assert
-            Assert.IsInstanceOf<OkObjectResult>(result);
+            Assert.That(result, Is.InstanceOf<OkObjectResult>());
             var okResult = result as OkObjectResult;
-            Assert.AreEqual(expectedUser, okResult.Value);
+            Assert.That(okResult.Value, Is.EqualTo(expectedUser));
         }
 
         [Test]
@@ -476,7 +476,7 @@ namespace StudentCourseEnrollmentApp.Tests.Controllers
             var result = await _controller.GetUserById(userId);
 
             // Assert
-            Assert.IsInstanceOf<NotFoundResult>(result);
+            Assert.That(result, Is.InstanceOf<NotFoundResult>());
         }
 
         [Test]
@@ -493,9 +493,9 @@ namespace StudentCourseEnrollmentApp.Tests.Controllers
             var result = await _controller.DeleteUser(userId);
 
             // Assert
-            Assert.IsInstanceOf<OkObjectResult>(result);
+            Assert.That(result, Is.InstanceOf<OkObjectResult>());
             var okResult = result as OkObjectResult;
-            Assert.AreEqual("User deleted successfully", okResult.Value);
+            Assert.That(okResult.Value, Is.EqualTo("User deleted successfully"));
         }
 
         [Test]
@@ -512,9 +512,9 @@ namespace StudentCourseEnrollmentApp.Tests.Controllers
             var result = await _controller.DeleteUser(userId);
 
             // Assert
-            Assert.IsInstanceOf<BadRequestObjectResult>(result);
+            Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
             var badRequestResult = result as BadRequestObjectResult;
-            Assert.AreEqual("Cannot delete user with enrollments or user not found", badRequestResult.Value);
+            Assert.That(badRequestResult.Value, Is.EqualTo("Cannot delete user with enrollments or user not found"));
         }
 
         [Test]
@@ -531,9 +531,9 @@ namespace StudentCourseEnrollmentApp.Tests.Controllers
             var result = await _controller.DeleteCourse(courseId);
 
             // Assert
-            Assert.IsInstanceOf<OkObjectResult>(result);
+            Assert.That(result, Is.InstanceOf<OkObjectResult>());
             var okResult = result as OkObjectResult;
-            Assert.AreEqual("Course deleted successfully", okResult.Value);
+            Assert.That(okResult.Value, Is.EqualTo("Course deleted successfully"));
         }
 
         [Test]
@@ -550,9 +550,9 @@ namespace StudentCourseEnrollmentApp.Tests.Controllers
             var result = await _controller.DeleteCourse(courseId);
 
             // Assert
-            Assert.IsInstanceOf<BadRequestObjectResult>(result);
+            Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
             var badRequestResult = result as BadRequestObjectResult;
-            Assert.AreEqual("Cannot delete course with enrollments or course not found", badRequestResult.Value);
+            Assert.That(badRequestResult.Value, Is.EqualTo("Cannot delete course with enrollments or course not found"));
         }
     }
 }

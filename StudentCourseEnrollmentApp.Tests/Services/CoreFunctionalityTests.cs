@@ -109,13 +109,13 @@ namespace StudentCourseEnrollmentApp.Tests.Services
             var enrolledCourses = await _enrollmentService.GetEnrolledCoursesByStudentIdAsync(userId);
 
             // Assert
-            Assert.AreEqual(1, enrolledCourses.Count(), "Student should see 1 enrolled course");
+            Assert.That(enrolledCourses.Count(), Is.EqualTo(1), "Student should see 1 enrolled course");
             var enrolledCourse = enrolledCourses.First();
-            Assert.AreEqual(_testCourse1.CourseId, enrolledCourse.CourseId, "Should show correct course ID");
-            Assert.AreEqual(_testCourse1.CourseTitle, enrolledCourse.CourseTitle, "Should show correct course title");
-            Assert.AreEqual(_testCourse1.CourseCode, enrolledCourse.CourseCode, "Should show correct course code");
-            Assert.AreEqual(_testCourse1.Description, enrolledCourse.Description, "Should show correct course description");
-            Assert.AreEqual(_testCourse1.Credits, enrolledCourse.Credits, "Should show correct course credits");
+            Assert.That(enrolledCourse.CourseId, Is.EqualTo(_testCourse1.CourseId), "Should show correct course ID");
+            Assert.That(enrolledCourse.CourseTitle, Is.EqualTo(_testCourse1.CourseTitle), "Should show correct course title");
+            Assert.That(enrolledCourse.CourseCode, Is.EqualTo(_testCourse1.CourseCode), "Should show correct course code");
+            Assert.That(enrolledCourse.Description, Is.EqualTo(_testCourse1.Description), "Should show correct course description");
+            Assert.That(enrolledCourse.Credits, Is.EqualTo(_testCourse1.Credits), "Should show correct course credits");
         }
 
         [Test]
@@ -129,10 +129,10 @@ namespace StudentCourseEnrollmentApp.Tests.Services
             var availableCourses = await _enrollmentService.GetAvailableCoursesByStudentIdAsync(userId);
 
             // Assert
-            Assert.AreEqual(1, availableCourses.Count(), "Student should see 1 available course");
+            Assert.That(availableCourses.Count(), Is.EqualTo(1), "Student should see 1 available course");
             var availableCourse = availableCourses.First();
-            Assert.AreEqual(_testCourse2.CourseId, availableCourse.CourseId, "Should show correct available course");
-            Assert.IsFalse(availableCourses.Any(c => c.CourseId == _testCourse1.CourseId), "Enrolled course should not be available");
+            Assert.That(availableCourse.CourseId, Is.EqualTo(_testCourse2.CourseId), "Should show correct available course");
+            Assert.That(availableCourses.Any(c => c.CourseId == _testCourse1.CourseId), Is.False, "Enrolled course should not be available");
         }
 
         [Test]
@@ -144,22 +144,22 @@ namespace StudentCourseEnrollmentApp.Tests.Services
 
             // Verify enrollment exists
             var enrolledCourses = await _enrollmentService.GetEnrolledCoursesByStudentIdAsync(userId);
-            Assert.AreEqual(1, enrolledCourses.Count(), "Student should see 1 enrollment before deregistration");
+            Assert.That(enrolledCourses.Count(), Is.EqualTo(1), "Student should see 1 enrollment before deregistration");
 
             // Act: Deregister from course
             var deregistrationResult = await _enrollmentService.DeregisterStudentFromCourseAsync(userId, _testCourse1.CourseId);
 
             // Assert: Deregistration should succeed
-            Assert.IsTrue(deregistrationResult, "Deregistration should succeed");
+            Assert.That(deregistrationResult, Is.True, "Deregistration should succeed");
 
             // Verify enrollment no longer exists
             var enrolledCoursesAfter = await _enrollmentService.GetEnrolledCoursesByStudentIdAsync(userId);
-            Assert.AreEqual(0, enrolledCoursesAfter.Count(), "Student should see 0 enrollments after deregistration");
+            Assert.That(enrolledCoursesAfter.Count(), Is.EqualTo(0), "Student should see 0 enrollments after deregistration");
 
             // Verify course is now available again
             var availableCourses = await _enrollmentService.GetAvailableCoursesByStudentIdAsync(userId);
-            Assert.AreEqual(2, availableCourses.Count(), "Student should see 2 available courses after deregistration");
-            Assert.IsTrue(availableCourses.Any(c => c.CourseId == _testCourse1.CourseId), "Deregistered course should be available again");
+            Assert.That(availableCourses.Count(), Is.EqualTo(2), "Student should see 2 available courses after deregistration");
+            Assert.That(availableCourses.Any(c => c.CourseId == _testCourse1.CourseId), Is.True, "Deregistered course should be available again");
         }
 
         [Test]
@@ -170,17 +170,17 @@ namespace StudentCourseEnrollmentApp.Tests.Services
 
             // Act: First enrollment
             var firstEnrollment = await _enrollmentService.EnrollStudentInCourseAsync(userId, _testCourse1.CourseId);
-            Assert.IsTrue(firstEnrollment, "First enrollment should succeed");
+            Assert.That(firstEnrollment, Is.True, "First enrollment should succeed");
 
             // Act: Second enrollment attempt
             var secondEnrollment = await _enrollmentService.EnrollStudentInCourseAsync(userId, _testCourse1.CourseId);
 
             // Assert: Second enrollment should fail
-            Assert.IsFalse(secondEnrollment, "Second enrollment should fail - already enrolled");
+            Assert.That(secondEnrollment, Is.False, "Second enrollment should fail - already enrolled");
 
             // Verify only one enrollment exists
             var enrolledCourses = await _enrollmentService.GetEnrolledCoursesByStudentIdAsync(userId);
-            Assert.AreEqual(1, enrolledCourses.Count(), "Student should still see only 1 enrollment");
+            Assert.That(enrolledCourses.Count(), Is.EqualTo(1), "Student should still see only 1 enrollment");
         }
 
         [Test]
@@ -194,11 +194,11 @@ namespace StudentCourseEnrollmentApp.Tests.Services
             var deregistrationResult = await _enrollmentService.DeregisterStudentFromCourseAsync(userId, _testCourse1.CourseId);
 
             // Assert: Deregistration should fail
-            Assert.IsFalse(deregistrationResult, "Deregistration should fail - not enrolled");
+            Assert.That(deregistrationResult, Is.False, "Deregistration should fail - not enrolled");
 
             // Verify no enrollments exist
             var enrolledCourses = await _enrollmentService.GetEnrolledCoursesByStudentIdAsync(userId);
-            Assert.AreEqual(0, enrolledCourses.Count(), "Student should see 0 enrollments");
+            Assert.That(enrolledCourses.Count(), Is.EqualTo(0), "Student should see 0 enrollments");
         }
 
         [Test]
@@ -213,11 +213,11 @@ namespace StudentCourseEnrollmentApp.Tests.Services
             var availableCourses = await _enrollmentService.GetAvailableCoursesByStudentIdAsync(userId);
 
             // Assert: No courses should be available since student is enrolled in all
-            Assert.AreEqual(0, availableCourses.Count(), "Student should see 0 available courses when enrolled in all");
+            Assert.That(availableCourses.Count(), Is.EqualTo(0), "Student should see 0 available courses when enrolled in all");
 
             // Verify specific courses are not available
-            Assert.IsFalse(availableCourses.Any(c => c.CourseId == _testCourse1.CourseId), "First course should not be available");
-            Assert.IsFalse(availableCourses.Any(c => c.CourseId == _testCourse2.CourseId), "Second course should not be available");
+            Assert.That(availableCourses.Any(c => c.CourseId == _testCourse1.CourseId), Is.False, "First course should not be available");
+            Assert.That(availableCourses.Any(c => c.CourseId == _testCourse2.CourseId), Is.False, "Second course should not be available");
         }
 
         [Test]
@@ -227,11 +227,11 @@ namespace StudentCourseEnrollmentApp.Tests.Services
             var allCourses = await _courseService.GetAllCoursesAsync();
 
             // Assert
-            Assert.AreEqual(2, allCourses.Count(), "Should return 2 courses");
+            Assert.That(allCourses.Count(), Is.EqualTo(2), "Should return 2 courses");
             
             var courseIds = allCourses.Select(c => c.CourseId).ToList();
-            Assert.Contains(_testCourse1.CourseId, courseIds, "Should include first course");
-            Assert.Contains(_testCourse2.CourseId, courseIds, "Should include second course");
+            Assert.That(courseIds, Does.Contain(_testCourse1.CourseId), "Should include first course");
+            Assert.That(courseIds, Does.Contain(_testCourse2.CourseId), "Should include second course");
         }
 
         [Test]
@@ -241,12 +241,12 @@ namespace StudentCourseEnrollmentApp.Tests.Services
             var course = await _courseService.GetCourseByIdAsync(_testCourse1.CourseId);
 
             // Assert
-            Assert.IsNotNull(course, "Course should not be null");
-            Assert.AreEqual(_testCourse1.CourseId, course.CourseId, "Should return correct course ID");
-            Assert.AreEqual(_testCourse1.CourseTitle, course.CourseTitle, "Should return correct course title");
-            Assert.AreEqual(_testCourse1.CourseCode, course.CourseCode, "Should return correct course code");
-            Assert.AreEqual(_testCourse1.Description, course.Description, "Should return correct course description");
-            Assert.AreEqual(_testCourse1.Credits, course.Credits, "Should return correct course credits");
+            Assert.That(course, Is.Not.Null, "Course should not be null");
+            Assert.That(course.CourseId, Is.EqualTo(_testCourse1.CourseId), "Should return correct course ID");
+            Assert.That(course.CourseTitle, Is.EqualTo(_testCourse1.CourseTitle), "Should return correct course title");
+            Assert.That(course.CourseCode, Is.EqualTo(_testCourse1.CourseCode), "Should return correct course code");
+            Assert.That(course.Description, Is.EqualTo(_testCourse1.Description), "Should return correct course description");
+            Assert.That(course.Credits, Is.EqualTo(_testCourse1.Credits), "Should return correct course credits");
         }
 
         [Test]
@@ -256,7 +256,7 @@ namespace StudentCourseEnrollmentApp.Tests.Services
             var course = await _courseService.GetCourseByIdAsync(999); // Non-existent course ID
 
             // Assert
-            Assert.IsNull(course, "Should return null for non-existent course");
+            Assert.That(course, Is.Null, "Should return null for non-existent course");
         }
 
         [Test]
@@ -274,9 +274,9 @@ namespace StudentCourseEnrollmentApp.Tests.Services
                 .FirstOrDefault(e => e.UserId == userId && e.CourseId == _testCourse1.CourseId);
 
             // Assert
-            Assert.IsNotNull(enrollment, "Enrollment should exist");
-            Assert.IsTrue(enrollment.EnrollmentDate >= beforeEnrollment, "Enrollment date should be after or equal to before enrollment time");
-            Assert.IsTrue(enrollment.EnrollmentDate <= DateTime.UtcNow, "Enrollment date should be before or equal to current time");
+            Assert.That(enrollment, Is.Not.Null, "Enrollment should exist");
+            Assert.That(enrollment.EnrollmentDate >= beforeEnrollment, Is.True, "Enrollment date should be after or equal to before enrollment time");
+            Assert.That(enrollment.EnrollmentDate <= DateTime.UtcNow, Is.True, "Enrollment date should be before or equal to current time");
         }
 
         [Test]
@@ -314,18 +314,18 @@ namespace StudentCourseEnrollmentApp.Tests.Services
             var enrollment2Result = await _enrollmentService.EnrollStudentInCourseAsync(student2.Id, _testCourse1.CourseId);
 
             // Assert: Both enrollments should succeed
-            Assert.IsTrue(enrollment1Result, "First student enrollment should succeed");
-            Assert.IsTrue(enrollment2Result, "Second student enrollment should succeed");
+            Assert.That(enrollment1Result, Is.True, "First student enrollment should succeed");
+            Assert.That(enrollment2Result, Is.True, "Second student enrollment should succeed");
 
             // Verify both students see the course as enrolled
             var student1Enrollments = await _enrollmentService.GetEnrolledCoursesByStudentIdAsync(student1.Id);
             var student2Enrollments = await _enrollmentService.GetEnrolledCoursesByStudentIdAsync(student2.Id);
 
-            Assert.AreEqual(1, student1Enrollments.Count(), "First student should see 1 enrollment");
-            Assert.AreEqual(1, student2Enrollments.Count(), "Second student should see 1 enrollment");
+            Assert.That(student1Enrollments.Count(), Is.EqualTo(1), "First student should see 1 enrollment");
+            Assert.That(student2Enrollments.Count(), Is.EqualTo(1), "Second student should see 1 enrollment");
 
-            Assert.AreEqual(_testCourse1.CourseId, student1Enrollments.First().CourseId, "First student should see correct course");
-            Assert.AreEqual(_testCourse1.CourseId, student2Enrollments.First().CourseId, "Second student should see correct course");
+            Assert.That(student1Enrollments.First().CourseId, Is.EqualTo(_testCourse1.CourseId), "First student should see correct course");
+            Assert.That(student2Enrollments.First().CourseId, Is.EqualTo(_testCourse1.CourseId), "Second student should see correct course");
         }
     }
 }

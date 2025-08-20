@@ -23,7 +23,7 @@ public class EnrollmentsControllerTests
 
         var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
         {
-            new Claim(ClaimTypes.NameIdentifier, "1")
+            new Claim("UserId", "1")
         }, "mock"));
 
         _controller.ControllerContext = new ControllerContext
